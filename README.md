@@ -1,12 +1,10 @@
-# 规则解释 AI（AstrBot + RAG）
+# 规则解释 AI（RAG 规则知识库 + 提示词方案）
 
-面向 [CN]RXSEND 白藏测试服（SCP:RP / Garry's Mod）的规则解释机器人完整方案：
+面向 [CN]RXSEND 白藏测试服（SCP:RP / Garry's Mod）的规则解释 AI 完整方案。**核心是一套平台无关的 RAG 知识库与提示词工程**，不绑定任何特定框架——当前部署在 [AstrBot](https://github.com/AstrBotDevs/AstrBot)（QQ 机器人框架），同样可导入 Dify、FastGPT、AnythingLLM 等任何支持 RAG / 知识库问答的平台复用。
 
 - **RAG 知识库**（`kb/`）：由服务器规则文档、人物图鉴 docx 转出的 77 个 Markdown 文件，含规则原文、32 个阵营档案、30 个人物分组档案（188 个角色），以及手工维护的速查层（阵营关系、术语别名、特殊事件、场景判定、处罚速查）。
-- **系统提示词**（`prompt/`）：18 条判定准则、AstrBot persona、处罚速查表、39 条回归测试用例。
-- **渲染插件**（`astrbot_plugin_rule_card/`）：把规则解释回复自动渲染成 SCP 档案风卡片图片，内置 Playwright 本地渲染，Docker 数据卷全量持久化方案。
-
-直接对接 [AstrBot](https://github.com/AstrBotDevs/AstrBot)（QQ 机器人框架）的知识库 + 人格能力，无需写代码即可在自己的服务器复刻同款规则问答机器人。
+- **系统提示词**（`prompt/`）：18 条判定准则、系统 persona、处罚速查表、39 条回归测试用例。除 AstrBot persona 格式外，判定准则与速查表对任何 LLM 应用直接可用。
+- **渲染插件**（`astrbot_plugin_rule_card/`，可选）：AstrBot 专属的展示层增强，把规则解释回复自动渲染成 SCP 档案风卡片图片，内置 Playwright 本地渲染，Docker 数据卷全量持久化方案。
 
 ## 仓库结构
 
@@ -45,7 +43,9 @@ _build_chars_kb.py      人物 docx → kb/08-人物-*.md 的转换脚本
   知识库已在对应位置插入 `【图片缺失】` 占位，提示词里也明确要求模型不得脑补。要补全请人工加上图注文字。
 - 转换脚本按手工标题表切分（`_build_kb.py` 里的 `HEAD`），规则文档增删行后需要同步更新行号表，或直接手工校对 `kb/`。
 
-## 二、AstrBot 配置步骤
+## 二、部署步骤（以 AstrBot 为例）
+
+> 本项目不依赖 AstrBot：`kb/` 是标准的 Markdown 知识库语料，`prompt/01/03` 是通用判定准则与速查表——在 Dify、FastGPT 等平台上传 kb/ 全部文件、把 prompt/02 的核心内容设为系统提示词即可等价复刻。下文仅以当前生产环境 AstrBot 为例。
 
 1. **建知识库**：AstrBot 网页端 → 知识库 → 新建 → 上传 `kb/` 下全部 `.md`。
    - 分块：`.md` 按 Markdown 标题切分（只识别 `#`~`####`，h5/h6 不识别），父标题路径会拼进块文本；`分块大小`保持默认 512。`分块重叠`只在单个 section 超过 512 字符被按行递归切分时生效，按标题正常切出的块之间没有重叠——调大它连接不了相邻条款，保持默认即可（速查层文件已卡片化，每张卡片独立成块，不依赖上下文）。
@@ -132,6 +132,6 @@ _build_chars_kb.py      人物 docx → kb/08-人物-*.md 的转换脚本
 
 | 内容 | 协议 |
 |---|---|
-| `astrbot_plugin_rule_card/`、`_build_*.py` 等代码 | 待定（推荐 AGPL-3.0，与 AstrBot 主项目一致，见协议说明） |
-| `kb/`、`prompt/` 规则与提示词内容 | 待定（推荐 CC BY-NC-SA 4.0） |
+| `astrbot_plugin_rule_card/` 插件、`_build_*.py` 脚本 | 待定（推荐 AGPL-3.0；插件与 AstrBot 主项目同协议最稳妥，见协议说明） |
+| `kb/`、`prompt/` 规则与提示词内容（本项目核心，平台无关） | 待定（推荐 CC BY-NC-SA 4.0） |
 | SCP 相关设定概念 | 遵循 SCP 基金会社区 CC BY-SA 3.0 |
