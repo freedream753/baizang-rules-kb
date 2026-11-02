@@ -7,6 +7,10 @@ __pycache__/
 _rules_raw.txt
 _chars_raw.txt
 
+# 构建脚本（不开源，仅内部使用）
+_build_kb.py
+_build_chars_kb.py
+
 # 原始文档（体积大且为内部资料，不入库）
 *.docx
 *.zip
