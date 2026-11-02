@@ -4,7 +4,8 @@
 
 - **RAG 知识库**（`kb/`）：由服务器规则文档、人物图鉴 docx 转出的 77 个 Markdown 文件，含规则原文、32 个阵营档案、30 个人物分组档案（188 个角色），以及手工维护的速查层（阵营关系、术语别名、特殊事件、场景判定、处罚速查）。
 - **系统提示词**（`prompt/`）：18 条判定准则、系统 persona、处罚速查表、39 条回归测试用例。除 AstrBot persona 格式外，判定准则与速查表对任何 LLM 应用直接可用。
-- **渲染插件**（`astrbot_plugin_rule_card/`，可选）：AstrBot 专属的展示层增强，把规则解释回复自动渲染成 SCP 档案风卡片图片，内置 Playwright 本地渲染，Docker 数据卷全量持久化方案。
+
+> 配套插件 [astrbot_plugin_rule_card](https://github.com/wujunze/astrbot_plugin_rule_card)（把规则解释回复渲染成 SCP 档案风卡片图片，AGPL-3.0，独立仓库维护），本仓库为纯内容仓库，可独立使用。
 
 ## 仓库结构
 
@@ -28,7 +29,6 @@ prompt/
   02-系统提示词.md      AstrBot persona——"你是谁、按什么格式答"
   03-处罚速查表.md      文档明文处罚 + 兜底口径 + 证据要求 + 已知矛盾
   04-回归测试用例.md    39 条验收用例，改提示词或换规则版本后必跑
-astrbot_plugin_rule_card/  SCP 风格规则卡片渲染插件（详见其 README）
 ```
 
 > 不入库：中间产物（`_rules_raw.txt`、`_chars_raw.txt`）、原始 docx，以及 **docx → Markdown 的转换脚本（`_build_kb.py`、`_build_chars_kb.py`，不开源）**。kb/ 中的 01–07 章与 08-人物文件由脚本生成，仓库内是最终产物，可直接使用。
@@ -54,7 +54,7 @@ astrbot_plugin_rule_card/  SCP 风格规则卡片渲染插件（详见其 README
 3. **挂知识库**：在该人格 / 会话设置中启用上面建的知识库。
 4. **触发方式**：QQ 群里建议用 @ 或唤醒词触发，不要开启全量自动回复——规则问答是低频刚需，自动回复会误伤日常聊天。
 5. **回复长度**：QQ 单条有长度上限，建议开启自动分段；系统提示词里已要求用纯文本而不是 Markdown 表格。
-6. **（可选）卡片渲染**：安装 `astrbot_plugin_rule_card/` 插件，规则解释回复会自动转成 SCP 风格卡片图片，安装与 Docker 持久化见[插件 README](astrbot_plugin_rule_card/README.md)。
+6. **（可选）卡片渲染**：另行安装 [astrbot_plugin_rule_card](https://github.com/wujunze/astrbot_plugin_rule_card) 插件，规则解释回复会自动转成 SCP 风格卡片图片，安装与 Docker 持久化见该仓库 README。
 
 ## 三、检索质量的关键：调用词
 
@@ -114,9 +114,9 @@ astrbot_plugin_rule_card/  SCP 风格规则卡片渲染插件（详见其 README
 
 ## 六、开源范围与免责声明
 
-**本仓库包含：** kb/ 知识库全文、prompt/ 提示词、渲染插件源码。
+**本仓库包含：** kb/ 知识库全文、prompt/ 提示词。
 
-**本仓库不包含：** docx → Markdown 转换脚本（`_build_kb.py`、`_build_chars_kb.py`，不开源）、服务器内部运维记录、聊天记录截图、原始 docx 文档及提取的中间产物。
+**本仓库不包含：** docx → Markdown 转换脚本（`_build_kb.py`、`_build_chars_kb.py`，不开源）、渲染插件（独立仓库 [astrbot_plugin_rule_card](https://github.com/wujunze/astrbot_plugin_rule_card)）、服务器内部运维记录、聊天记录截图、原始 docx 文档及提取的中间产物。
 
 **免责声明：**
 
@@ -126,13 +126,11 @@ astrbot_plugin_rule_card/  SCP 风格规则卡片渲染插件（详见其 README
 
 ## 七、开源协议
 
-本仓库采用**双协议**，各协议的详细对比见 [LICENSE-GUIDE.md](LICENSE-GUIDE.md)：
+本仓库为纯内容仓库，全部内容（`kb/` 与 `prompt/`）采用 **[CC BY-NC-SA 4.0](LICENSE)**（署名-非商业性使用-相同方式共享 4.0 国际）：
 
-| 内容 | 协议 |
-|---|---|
-| `astrbot_plugin_rule_card/` 插件源码 | [AGPL-3.0](LICENSE)（与 AstrBot 主项目同协议） |
-| `kb/`、`prompt/` 规则与提示词内容（本项目核心，平台无关） | [CC BY-NC-SA 4.0](LICENSE-CONTENT)（署名-非商业性使用-相同方式共享） |
-| SCP 相关设定概念 | 遵循 SCP 基金会社区 CC BY-SA 3.0 |
-| docx → Markdown 转换脚本 | 不开源，不在授权范围内 |
+- **署名**：引用 / 转载请注明本项目出处
+- **非商业性使用**：不得将知识库内容用于商业用途
+- **相同方式共享**：演绎作品需以相同协议共享
+- SCP 基金会相关概念（SCP-173、GOC、MTF 等）遵循其原始社区的 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) 授权体系
 
-引用 / 转载 `kb/`、`prompt/` 内容请注明本项目出处；不得用于商业用途；演绎作品需以相同协议共享。插件源码的使用与修改遵循 AGPL-3.0 的开源义务。
+配套插件 [astrbot_plugin_rule_card](https://github.com/wujunze/astrbot_plugin_rule_card) 为独立代码仓库，采用 AGPL-3.0（与 AstrBot 主项目一致），不在本仓库授权范围内。
