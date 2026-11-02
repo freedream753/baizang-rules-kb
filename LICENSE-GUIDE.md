@@ -1,5 +1,7 @@
 # 开源协议说明（LICENSE GUIDE）
 
+> **本仓库已确定采用双协议：** 代码（插件）= AGPL-3.0（见 [LICENSE](LICENSE)），内容（kb/ + prompt/）= CC BY-NC-SA 4.0（见 [LICENSE-CONTENT](LICENSE-CONTENT)）。下文保留完整的对比分析供参考。
+
 本仓库包含两类性质不同的内容，需要分开选择协议：
 
 | 内容类型 | 位置 | 性质 | 平台依赖 |
@@ -76,27 +78,20 @@
 2. kb 内容包含大量 **SCP 基金会**相关概念（SCP-173、GOC、MTF 等）。SCP 社区内容遵循 **CC BY-SA 3.0**，若 kb 内容与之构成演绎作品，CC 协议版本存在兼容细节（CC BY-SA 3.0 与 4.0 之间的"相同方式共享"有版本衔接问题，涉 SCP 内容时建议沿用 CC BY-SA 3.0 或在声明中单独说明）。
 3. `prompt/` 是本项目原创的提示词工程内容，可自由选择。
 
-**内容协议建议：**
-
-```
-推荐：CC BY-NC-SA 4.0  ←  防止别人拿服务器规则去商业化，社区属性项目最常见的选择
-备选：CC BY-SA 4.0     ←  若服务器方不介意商用（与 SCP 社区 SA 精神一致）
-```
+**内容协议（已确定）：CC BY-NC-SA 4.0**——防止别人拿服务器规则去商业化，社区属性项目最常见的选择。全文见 [LICENSE-CONTENT](LICENSE-CONTENT)。
 
 > ⚠️ CC 协议**不适用于软件和代码**，不要给整个仓库统一挂 CC 协议。
 
-## 三、落地操作
+## 三、落地操作（已完成）
 
-确定协议后：
-
-1. 从 <https://www.gnu.org/licenses/> 或 <https://creativecommons.org/licenses/> 下载协议全文，以 `LICENSE`（代码）与 `LICENSE-CONTENT`（内容）两个文件放入仓库根目录。
-2. 将 README「七、开源协议」表格中的"待定"替换为实际协议。
-3. 每个源码文件头部建议加声明（以 AGPL-3.0 为例）：
-   ```python
-   # Copyright (C) 2026 <你的名字>
-   # SPDX-License-Identifier: AGPL-3.0-or-later
-   ```
-4. GitHub 仓库设置 → About → Choose a license，或让 GitHub 在首次提交 `LICENSE` 文件后自动识别协议徽标。
+- [x] 协议全文入库：`LICENSE`（AGPL-3.0）、`LICENSE-CONTENT`（CC BY-NC-SA 4.0）
+- [x] README「七、开源协议」表格已更新为实际协议
+- [ ] 待办：插件源码文件头部补充声明（以 AGPL-3.0 为例）：
+  ```python
+  # Copyright (C) 2026 <你的名字>
+  # SPDX-License-Identifier: AGPL-3.0-or-later
+  ```
+- 提示：GitHub 首次提交 `LICENSE` 文件后会自动识别协议并在仓库页显示徽标；About 栏可手动补充 CC BY-NC-SA 4.0 说明
 
 ## 四、常见疑问
 

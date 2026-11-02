@@ -126,10 +126,13 @@ astrbot_plugin_rule_card/  SCP 风格规则卡片渲染插件（详见其 README
 
 ## 七、开源协议
 
-本仓库采用**双协议**：代码与文档框架、知识库内容分别授权。各协议的详细对比与选择建议见 [LICENSE-GUIDE.md](LICENSE-GUIDE.md)。
+本仓库采用**双协议**，各协议的详细对比见 [LICENSE-GUIDE.md](LICENSE-GUIDE.md)：
 
 | 内容 | 协议 |
 |---|---|
-| `astrbot_plugin_rule_card/` 插件 | 待定（推荐 AGPL-3.0；插件与 AstrBot 主项目同协议最稳妥，见协议说明） |
-| `kb/`、`prompt/` 规则与提示词内容（本项目核心，平台无关） | 待定（推荐 CC BY-NC-SA 4.0） |
+| `astrbot_plugin_rule_card/` 插件源码 | [AGPL-3.0](LICENSE)（与 AstrBot 主项目同协议） |
+| `kb/`、`prompt/` 规则与提示词内容（本项目核心，平台无关） | [CC BY-NC-SA 4.0](LICENSE-CONTENT)（署名-非商业性使用-相同方式共享） |
 | SCP 相关设定概念 | 遵循 SCP 基金会社区 CC BY-SA 3.0 |
+| docx → Markdown 转换脚本 | 不开源，不在授权范围内 |
+
+引用 / 转载 `kb/`、`prompt/` 内容请注明本项目出处；不得用于商业用途；演绎作品需以相同协议共享。插件源码的使用与修改遵循 AGPL-3.0 的开源义务。
