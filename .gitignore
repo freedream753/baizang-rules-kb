@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 构建中间产物（由 docx 提取，不入库）
+_rules_raw.txt
+_chars_raw.txt
+
+# 原始文档（体积大且为内部资料，不入库）
+*.docx
+*.zip
+
+# 渲染预览产物
+preview.html
+
+# IDE / 系统
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+~$*
+
+# 本地私有内容（运维记录、截图等，严禁入库）
+memory/
+返回案例/
+.screenshots/
+*.log

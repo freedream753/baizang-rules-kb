@@ -1,0 +1,38 @@
+{
+  "enabled": {
+    "description": "开启后将规则解释回复自动渲染为图片卡片",
+    "type": "bool",
+    "default": true
+  },
+  "require_tag": {
+    "description": "仅当回复包含【结论】/【依据】/【处罚】等标签时才渲染，避免把普通聊天转成图片",
+    "type": "bool",
+    "default": true
+  },
+  "card_width": {
+    "description": "卡片宽度（像素）",
+    "type": "int",
+    "default": 680
+  },
+  "server_name": {
+    "description": "卡片头部显示的服务器名",
+    "type": "string",
+    "default": "[CN]RXSEND 白藏测试服"
+  },
+  "bot_name": {
+    "description": "卡片头部显示的机器人名",
+    "type": "string",
+    "default": "规则助手"
+  },
+  "theme": {
+    "description": "卡片主题：dark 黑夜（深色底），light 白天（纸面浅色底）",
+    "type": "string",
+    "default": "dark",
+    "options": ["dark", "light"]
+  },
+  "enable_doc": {
+    "description": "开启后，规则原文/人物图鉴类长文回复（含多个【】标题+列表）也会渲染为文档卡片",
+    "type": "bool",
+    "default": true
+  }
+}

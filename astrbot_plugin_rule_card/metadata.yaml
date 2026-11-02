@@ -1,0 +1,5 @@
+name: astrbot_plugin_rule_card
+desc: 将规则助手的规则解释（【结论】等标签）与规则原文/图鉴类长文自动渲染为 SCP 风格卡片图片（内置 Playwright 渲染，使用系统微软雅黑字体，支持黑夜/白天主题；配套 compose 挂载方案把浏览器/依赖库/字体全部持久化到数据卷）。
+version: v1.3.4
+author: wujunze
+repo: ""

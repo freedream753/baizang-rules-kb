@@ -1,0 +1,166 @@
+{#- 规则解释卡片 · AstrBot html_render（HTML + Jinja2）模板
+  数据结构由 parser.build_data 生成：
+  {
+    "card_width": 680,
+    "server_name": "[CN]RXSEND 白藏测试服", "bot_name": "规则助手",
+    "date": "2026/10/29",
+    "query": "用户的问题（可为空）",
+    "theme": "dark  /  light（白天主题）",
+    "sections": [
+      {"tag": "结论", "color": "green", "highlight": true,
+       "lines": [{"kind": "text",   "text": "..."},
+                 {"kind": "bullet", "text": "..."},
+                 {"kind": "number", "num": "1", "text": "..."}]}
+    ]
+  }
+  调试：python preview.py 生成 preview.html，浏览器打开；或把本文件内容粘到
+  AstrBot Text2Image Playground（https://t2i-playground.astrbot.app/）改数据试渲染。
+  说明：html_render 用 Playwright 全页截图，body 用 inline-block 使页面宽度贴住卡片；
+  截图选项含 omit_background=True，body 透明即可露出卡片圆角。
+-#}
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: transparent; }
+  body { display: inline-block;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans SC", sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .mono { font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace; }
+
+  .card { --bg-card: #12151b; --bg-sec: #171c24;
+    --br-card: #262d38; --br-sec: #232a36;
+    --tx: #dde3ec; --tx-dim: #8b94a5; --tx-foot: #788291;
+    --q-bg: rgba(232, 177, 63, .055); --q-br: rgba(232, 177, 63, .35); --q-tx: #c9d1dd;
+    --amber: #e8b13f;
+    width: {{ card_width }}px;
+    background: var(--bg-card);
+    border: 1px solid var(--br-card);
+    border-top: 3px solid var(--amber);
+    border-radius: 14px;
+    color: var(--tx);
+    overflow: hidden; }
+
+  /* —— 白天主题（theme=light）：纸面底色，标签色加深保证可读 —— */
+  .card.light { --bg-card: #faf8f2; --bg-sec: #ffffff;
+    --br-card: #ddd6c8; --br-sec: #e7e2d6;
+    --tx: #2b303a; --tx-dim: #77808f; --tx-foot: #99a1ae;
+    --q-bg: rgba(176, 127, 22, .08); --q-br: rgba(176, 127, 22, .5); --q-tx: #57503c;
+    --amber: #d9a93c; }
+
+  /* —— 头部 —— */
+  .hd { display: flex; justify-content: space-between; align-items: center; padding: 15px 16px 11px; }
+  .hd-left { display: flex; align-items: center; gap: 11px; }
+  .badge { width: 42px; height: 42px; flex: none; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--amber); border-radius: 9px; color: var(--amber);
+    font-size: 13px; font-weight: 800; letter-spacing: 1.5px;
+    background: rgba(232, 177, 63, .07); }
+  .hd-title { font-size: 19px; font-weight: 700; letter-spacing: 2px; }
+  .hd-sub { font-size: 12px; color: var(--tx-dim); margin-top: 3px; letter-spacing: .5px; }
+  .hd-date { font-size: 11px; color: var(--tx-dim); text-align: right; line-height: 1.6; }
+
+  /* —— 用户问题 —— */
+  .query { margin: 2px 14px 12px; padding: 9px 12px;
+    background: var(--q-bg); border: 1px dashed var(--q-br);
+    border-radius: 8px; font-size: 13.5px; line-height: 1.65; color: var(--q-tx); }
+  .q-label { color: var(--amber); font-weight: 700; margin-right: 8px; }
+
+  /* —— 段落块 —— */
+  .sec { margin: 0 14px 10px; padding: 10px 13px 11px;
+    background: var(--bg-sec); border: 1px solid var(--br-sec); border-radius: 10px; }
+  .sec.highlight { background: linear-gradient(135deg, var(--cbg) 0%, var(--bg-sec) 55%); }
+  .sec-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+  .tag { flex: none; font-size: 13px; font-weight: 700; letter-spacing: 3px; padding: 2.5px 11px;
+    border-radius: 5px; color: var(--c); background: var(--cbg); border: 1px solid var(--cbr); }
+  .sec-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--cbr), transparent); }
+  .sec-body .para { font-size: 14.5px; line-height: 1.78; margin: 4px 0; }
+  .sec.highlight .sec-body .para { font-size: 16.5px; font-weight: 600; }
+  .li { display: flex; gap: 9px; margin: 6px 0; font-size: 14.5px; line-height: 1.72; }
+  .dot { flex: none; color: var(--c); font-weight: 700; }
+  .num { flex: none; width: 19px; height: 19px; margin-top: 3.5px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--cbr); border-radius: 50%;
+    color: var(--c); font-size: 11px; font-weight: 600; }
+  .li.warn .dot { color: var(--amber); }
+
+  /* —— 文档模式（规则原文 / 人物图鉴）—— */
+  .doc-h { font-size: 15px; font-weight: 700; color: var(--c); line-height: 1.45;
+    margin-bottom: 7px; padding-left: 9px; border-left: 3px solid var(--c);
+    letter-spacing: .5px; word-break: break-all; }
+  .sec-body .h { font-size: 14px; font-weight: 700; color: var(--c);
+    margin: 10px 0 2px; letter-spacing: .5px; }
+  .sec-body .h::before { content: "■ "; font-size: 12px; }
+
+  /* —— 各标签配色 —— */
+  .sec-green  { --c: #34d399; --cbg: rgba(52, 211, 153, .10);  --cbr: rgba(52, 211, 153, .45); }
+  .sec-blue   { --c: #60a5fa; --cbg: rgba(96, 165, 250, .10);  --cbr: rgba(96, 165, 250, .45); }
+  .sec-cyan   { --c: #22d3ee; --cbg: rgba(34, 211, 238, .10);  --cbr: rgba(34, 211, 238, .45); }
+  .sec-red    { --c: #f87171; --cbg: rgba(248, 113, 113, .10); --cbr: rgba(248, 113, 113, .45); }
+  .sec-purple { --c: #c084fc; --cbg: rgba(192, 132, 252, .10); --cbr: rgba(192, 132, 252, .45); }
+  .sec-amber  { --c: #fbbf24; --cbg: rgba(251, 191, 36, .10);  --cbr: rgba(251, 191, 36, .45); }
+  .sec-teal   { --c: #2dd4bf; --cbg: rgba(45, 212, 191, .10);  --cbr: rgba(45, 212, 191, .45); }
+  .sec-gray   { --c: #94a3b8; --cbg: rgba(148, 163, 184, .10); --cbr: rgba(148, 163, 184, .40); }
+
+  /* —— 白天主题标签配色（加深文字保证白底可读）—— */
+  .card.light .sec-green  { --c: #047857; --cbg: rgba(4, 120, 87, .09);  --cbr: rgba(4, 120, 87, .45); }
+  .card.light .sec-blue   { --c: #1d4ed8; --cbg: rgba(29, 78, 216, .08);  --cbr: rgba(29, 78, 216, .40); }
+  .card.light .sec-cyan   { --c: #0e7490; --cbg: rgba(14, 116, 144, .09); --cbr: rgba(14, 116, 144, .45); }
+  .card.light .sec-red    { --c: #b91c1c; --cbg: rgba(185, 28, 28, .07);  --cbr: rgba(185, 28, 28, .40); }
+  .card.light .sec-purple { --c: #6d28d9; --cbg: rgba(109, 40, 217, .08); --cbr: rgba(109, 40, 217, .40); }
+  .card.light .sec-amber  { --c: #b45309; --cbg: rgba(180, 83, 9, .10);   --cbr: rgba(180, 83, 9, .45); }
+  .card.light .sec-teal   { --c: #0f766e; --cbg: rgba(15, 118, 110, .09); --cbr: rgba(15, 118, 110, .45); }
+  .card.light .sec-gray   { --c: #4b5563; --cbg: rgba(75, 85, 99, .08);   --cbr: rgba(75, 85, 99, .40); }
+
+  /* —— 底部 —— */
+  .ft { display: flex; justify-content: space-between; align-items: center;
+    margin-top: 2px; padding: 9px 16px 12px;
+    border-top: 1px dashed var(--br-card); font-size: 11.5px; color: var(--tx-foot); }
+</style>
+
+<div class="card{% if theme == 'light' %} light{% endif %}">
+  <div class="hd">
+    <div class="hd-left">
+      <div class="badge mono">{% if doc %}ARC{% else %}SCP{% endif %}</div>
+      <div>
+        <div class="hd-title">{% if doc %}规则原文{% else %}规则解释{% endif %}</div>
+        <div class="hd-sub">{{ server_name }} · {{ bot_name }}</div>
+      </div>
+    </div>
+    <div class="hd-date mono">{{ date }}<br>{% if doc %}ARCHIVE{% else %}RECORD{% endif %}</div>
+  </div>
+
+  {%- if query %}
+  <div class="query"><span class="q-label">Q</span>{{ query }}</div>
+  {%- endif %}
+
+  {%- for sec in sections %}
+  <div class="sec sec-{{ sec.color }}{% if sec.highlight %} highlight{% endif %}">
+    {%- if doc %}
+    <div class="doc-h">{{ sec.tag }}</div>
+    {%- else %}
+    <div class="sec-head">
+      <span class="tag">{{ sec.tag }}</span>
+      <span class="sec-line"></span>
+    </div>
+    {%- endif %}
+    <div class="sec-body">
+      {%- for line in sec.lines %}
+        {%- if line.kind == 'h' %}
+      <div class="h">{{ line.text }}</div>
+        {%- elif line.kind == 'bullet' %}
+      <div class="li"><span class="dot">▪</span><span>{{ line.text }}</span></div>
+        {%- elif line.kind == 'warn' %}
+      <div class="li warn"><span class="dot">!</span><span>{{ line.text }}</span></div>
+        {%- elif line.kind == 'number' %}
+      <div class="li"><span class="num mono">{{ line.num }}</span><span>{{ line.text }}</span></div>
+        {%- else %}
+      <div class="para">{{ line.text }}</div>
+        {%- endif %}
+      {%- endfor %}
+    </div>
+  </div>
+  {%- endfor %}
+
+  <div class="ft">
+    <span>AI 依据服务器规则文档生成 · 不代表管理团队最终裁定</span>
+    <span class="mono">RULE-EXPLAIN</span>
+  </div>
+</div>
